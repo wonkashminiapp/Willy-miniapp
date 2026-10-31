@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17100c">
+  <title>Willy17</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{--bg:#120d0a;--panel:#211610;--orange:#ff9415;--cream:#f7e7d6;--muted:#c8ad96}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--cream);font:16px system-ui,Arial,sans-serif}
+    header{padding:24px 18px 16px;background:linear-gradient(135deg,#2d1a10,#120d0a)}
+    h1{margin:0;color:var(--orange);letter-spacing:1px;font-size:27px} header p{color:var(--muted);margin:7px 0 0;font-size:13px}
+    main{max-width:720px;margin:auto;padding:16px;display:grid;gap:15px}
+    .card{background:var(--panel);border:1px solid #50301d;border-radius:18px;padding:17px}
+    h2{font-size:19px;margin:0 0 9px} p{line-height:1.45}
+    .offer{background:#30200f;border-color:#8b4c12}
+    .button{display:block;width:100%;border:0;border-radius:12px;padding:14px;background:var(--orange);color:#201006;font-weight:800;font-size:16px;text-align:center;text-decoration:none;cursor:pointer}
+    .secondary{background:#38251a;color:var(--cream);border:1px solid #70431f}
+    .products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .product{background:#180f0b;border:1px solid #49301f;border-radius:14px;padding:12px}
+    .product .emoji{font-size:32px}.product h3{margin:6px 0;font-size:15px}.price{color:var(--orange);font-weight:800;margin:5px 0 10px}
+    .product button{width:100%;padding:9px;border:0;border-radius:9px;background:#ff9415;font-weight:700}
+    .muted{color:var(--muted);font-size:13px}.result{min-height:25px;color:#ffd18e;font-weight:700}
+    footer{text-align:center;color:#987e68;font-size:12px;padding:10px 20px 28px}
+    @media(min-width:600px){main{padding:22px}.products{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>WILLY17 ☕</h1>
+  <p>BOUTIQUE • OFFRES • CADEAUX</p>
+</header>
+<main>
+  <section class="card offer">
+    <h2>🎁 Offre de bienvenue</h2>
+    <p>La livraison est offerte et un cadeau est ajouté dès 100 € d’achat, selon les conditions de l’offre.</p>
+    <a class="button" href="#boutique">DÉCOUVRIR LA BOUTIQUE</a>
+  </section>
+  <section class="card" id="boutique">
+    <h2>🛍️ Nos produits</h2>
+    <p class="muted">Exemples à remplacer par tes vrais produits et tes prix.</p>
+    <div class="products" id="products"></div>
+  </section>
+  <section class="card">
+    <h2>🎰 Roulette cadeau</h2>
+    <p class="muted">Démo : le résultat est simulé dans le navigateur. Pour gérer réellement les 10 essais par jour et éviter la fraude, il faudra ajouter un serveur.</p>
+    <button class="button" id="spin">LANCER LA ROULETTE</button>
+    <p class="result" id="result" aria-live="polite"></p>
+  </section>
+  <section class="card">
+    <h2>📦 Commander</h2>
+    <p class="muted">Le bouton WhatsApp sera activé dès que ton numéro professionnel sera renseigné.</p>
+    <button class="button secondary" id="order">PRÉPARER MA COMMANDE</button>
+    <p class="result" id="orderResult"></p>
+  </section>
+</main>
+<footer>© Willy17</footer>
+<script>
+  const tg = window.Telegram?.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  // Remplace les exemples ci-dessous par tes produits et tes prix.
+  const products = [
+    {name:"Produit découverte", price:15, emoji:"☕"},
+    {name:"Sélection maison", price:25, emoji:"🎁"},
+    {name:"Pack premium", price:45, emoji:"✨"}
+  ];
+  const cart = [];
+  const productArea = document.getElementById("products");
+  products.forEach((p) => {
+    const el = document.createElement("article");
+    el.className = "product";
+    el.innerHTML = `<div class="emoji">${p.emoji}</div><h3>${p.name}</h3><div class="price">${p.price.toFixed(2)} €</div><button type="button">Ajouter</button>`;
+    el.querySelector("button").addEventListener("click", () => {
+      cart.push(p);
+      el.querySelector("button").textContent = "Ajouté ✓";
+      document.getElementById("orderResult").textContent = `${cart.length} article(s) dans le panier.`;
+    });
+    productArea.appendChild(el);
+  });
+
+  const prizes = ["-5 % sur une commande", "Un petit cadeau", "Merci d’avoir joué", "Livraison offerte"];
+  document.getElementById("spin").addEventListener("click", () => {
+    const prize = prizes[Math.floor(Math.random() * prizes.length)];
+    document.getElementById("result").textContent = "🎉 Résultat : " + prize;
+  });
+
+  document.getElementById("order").addEventListener("click", () => {
+    const total = cart.reduce((sum, p) => sum + p.price, 0);
+    document.getElementById("orderResult").textContent =
+      cart.length ? `Panier : ${cart.length} article(s), total indicatif ${total.toFixed(2)} €.` :
+      "Ton panier est vide. Ajoute d’abord un produit.";
+  });
+</script>
+</body>
+</html>
